@@ -1,0 +1,47 @@
+bash
+sudo -s
+apt update
+apt -y install mysql-server mysql-client
+<password>
+apt -y install nginx
+service nginx start
+apt -y install php7.0-fpm
+nano /etc/nginx/nginx.conf
+
+
+ location / {
+ # First attempt to serve request as file, then
+ # as directory, then fall back to displaying a 404.
+ try_files $uri $uri/ =404;
+ }
+
+ # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+ #
+ location ~ \.php$ {
+ include snippets/fastcgi-php.conf;
+
+ # With php7.0-cgi alone:
+ fastcgi_pass 127.0.0.1:9000;
+ # With php7.0-fpm:
+ #fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+ }
+
+service nginx reload
+
+nano /etc/php/7.0/fpm/php.ini
+cgi.fix_pathinfo=0
+service php7.0-fpm reload
+
+nano /var/www/html/info.php
+	<?php
+		phpinfo();
+	?>
+
+
+nano /etc/php/7.0/fpm/pool.d/www.conf
+;listen = /var/run/php5-fpm.sock
+listen = 127.0.0.1:9000
+
+service php7.0-fpm start
+
+https://www.mediaevent.de/tutorial/php-sqlite3.html
